@@ -1,3 +1,5 @@
+import { mat4, vec3 } from 'wgpu-matrix';
+
 // constants
 const UPDATE_INTERVAL = 50; // ms
 
@@ -32,6 +34,32 @@ context.configure({
 });
 
 // Setup WebGPU ------------------------------------------------
+
+// Setup camera ------------------------------------------------
+
+const initial_camera_position = vec3.create(3, 2, 5);
+const cameras = {
+    arcball: new ArcballCamera({ position: initial_camera_position }),
+    WASD: new WASDCamera({ position: initial_camera_position }),
+};
+
+const params = {
+    type: 'arcball',
+};
+
+// Setup camera ------------------------------------------------
+
+// Create vertex buffer for cube data
+let cube = new Cube(0.8);
+
+const vertices_buffer = device.createBuffer({
+    size: cube.cube_vertex_array.byteLength,
+    usage: GPUBufferUsage.VERTEX,
+    mappedAtCreation: true,
+});
+
+new Float32Array(vertices_buffer.getMappedRange()).set(cube.cube_vertex_array);
+vertices_buffer.unmap();
 
 // WebGPU update function
 function update() {
